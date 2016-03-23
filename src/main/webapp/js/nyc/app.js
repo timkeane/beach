@@ -19,6 +19,7 @@ nyc.App = (function(){
 			me.alert("Unable to load beach status. Please try again.");
 		});
 		$('#status-table').filterable({filter: $.proxy(me.extent, me)});
+		$(window).on('popstate', $.proxy(me.full, me));
 	};
 	
 	appClass.prototype = {
@@ -134,6 +135,14 @@ nyc.App = (function(){
 			});
 			$('#status-table').table('refresh');
 			$('#first-load').fadeOut();
+		},
+		/**
+		 * Return to full map
+		 * 
+		 * @public 
+		 */
+		full: function(){
+			this.zoom(nyc.NYC_EXTENT);
 		},
 		/**
 		 * Displays water quality testing results for the specified beach
