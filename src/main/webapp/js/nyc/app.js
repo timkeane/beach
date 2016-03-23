@@ -134,7 +134,6 @@ nyc.App = (function(){
 					.append('<td class="status ' + conf.css + '"><div>' + status + '</div></td>');
 			});
 			$('#status-table').table('refresh');
-			$('#first-load').fadeOut();
 		},
 		/**
 		 * Return to full map

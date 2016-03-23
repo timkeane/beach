@@ -3,9 +3,22 @@ $(document).ready(function(){
 	new nyc.Lang('body', nyc.data.languages);
 	new nyc.Share('body');
 	
+	var base = new nyc.ol.layer.BaseLayer();
+	var ortho = new nyc.ol.layer.BaseLayer(nyc.ol.layer.BaseLayer.ORTHO_OPTIONS);
+	
+	var timeout = false;
+	base.on('postcompose', function(event){
+		nyc.ol.layer.grayscale(event);
+		if (!timeout)
+			setTimeout(function(){
+				$('#first-load').fadeOut();
+			}, 1000);
+		timeout = true;
+	});
+
 	var map = new ol.Map({
 		target: $('#map')[0],
-		layers: [new nyc.ol.layer.BaseLayer()],
+		layers: [base, ortho],
 		view: new ol.View({
 			projection: nyc.EPSG_2263,
 			center: nyc.NYC_CENTER,
@@ -26,9 +39,9 @@ $(document).ready(function(){
 	});
 	/* change to imagery when zoomed in */
 	map.on('moveend', function(evt){
-		var ortho = $.inArray(map.getView().getResolution(), nyc.ol.layer.BaseLayer.RESOLUTIONS) > 4,
-			options = ortho ? nyc.ol.layer.BaseLayer.ORTHO_OPTIONS : nyc.ol.layer.BaseLayer.BASIC_OPTIONS;
-		map.getLayers().getArray()[0].setSource(options.source);
+		var isOrtho = $.inArray(map.getView().getResolution(), nyc.ol.layer.BaseLayer.RESOLUTIONS) > 4
+		ortho.setVisible(isOrtho);
+		base.setVisible(!isOrtho);
 	});
 	map.getView().fit(nyc.NYC_EXTENT, map.getSize());
 	
