@@ -1,0 +1,56 @@
+#share-btns {
+	position: fixed;
+	top: 45px;
+	right: 126px;
+	width: 86px;
+	background-color: #f9f9f9;
+	z-index: 10000;
+	border: 1px solid white;
+	padding: 3px;
+}
+#share-btns, #share-btns .noshow {
+	display: none;
+}
+#share-btns a {
+	background-size: 28px 28px;
+	background-position: center;
+	background-repeat: no-repeat;
+	background-color: dodgerblue;
+	border: none;
+	padding: 0;
+	width: 35px;
+	height: 35px;
+}
+#share-btns a {
+	position: relative;
+	display: inline-block;
+	margin: 4px 4px 0;
+	border-radius: 5px;
+}
+#share-btns a:hover {
+    background-color: darkblue;
+    border: 1px solid #FFFFAA;
+	width: 33px;
+	height: 33px;
+}
+#feedback-btn {
+	background-image: url(../img/feedback.png);
+}
+#facebook-btn {
+	background-image: url(../img/facebook.png);
+}
+#twitter-btn {
+	background-image: url(../img/twitter.png);
+}
+#google-btn {
+	background-image: url(../img/google.png);
+}
+#linkedin-btn {
+	background-image: url(../img/linkedin.png);
+}
+#tumblr-btn {
+	background-image: url(../img/tumblr.png);
+}
+#email-btn {
+	background-image: url(../img/email.png);
+}
