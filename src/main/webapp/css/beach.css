@@ -54,13 +54,10 @@ html, body, div, span, a, input, th, td, .ui-btn, .ui-page-theme-a .ui-btn, .ui-
 	background-size: 22px 22px;
 	background-repeat: no-repeat;
 }
-#status-table td.public, #status-table td.status {
+#status-table td.public {
 	background-image: url(../img/park.png);
 	background-position: 0 4px;
 	padding-left: 27px;
-}
-#status-table td.status {
-	background-image: url(../img/quality.png);
 }
 #status td.name, #status td.status {
 	cursor: pointer;
@@ -425,7 +422,7 @@ ul#menu, div#lang-choice-button, div#share-btns {
 		overflow: hidden;
 		text-overflow: ellipsis;
 	}
-	#quality button,Â #quality button:hover {
+	#quality button,Ã‚Â #quality button:hover {
 		width: 23px;
 		padding: 0;
 		color: transparent !important;
@@ -453,7 +450,7 @@ ul#menu, div#lang-choice-button, div#share-btns {
 	}
 }
 @media (max-width: 70em) and (orientation:landscape) {
-	#quality button,Â #quality button:hover {
+	#quality button,Ã‚Â #quality button:hover {
 		width: 23px;
 		padding: 0;
 		color: transparent !important;
