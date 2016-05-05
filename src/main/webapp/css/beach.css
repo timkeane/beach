@@ -1,4 +1,4 @@
-html, body, .ui-mobile .ui-page-active, #main, #splash {
+html, body, .ui-mobile .ui-page-active, #main, #map {
 	margin: 0;
 	padding: 0;
 	width: 100%;
@@ -431,13 +431,14 @@ ul#menu, div#lang-choice-button, div#share-btns {
 @media (orientation:landscape) {
 	#map, #status, #quality {
 		width: 50%;
-		height: calc(100% - 44px);
+		bottom: 0;
 		position: fixed;
 		margin: 0;
 		top: 44px;
 	}
 	#map {
 		left: 0;
+		height:100%;
 	}
 	#status, #quality {
 		right: 0;
