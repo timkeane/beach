@@ -10,12 +10,14 @@ nyc.App = (function(){
 	 * 
 	 */
 	var appClass = function(map, style){
-		var me = this
+		var me = this, 
+			timeOffset = 1000 * 60 * 15;
+		me.cacheBust = Math.round(new Date().getTime() / timeOffset) * timeOffset;
 		me.source = new ol.source.Vector({});
 		map.addLayer(new ol.layer.Vector({source: me.source, style: $.proxy(style.style, style)}));
 		me.map = map;
 		me.style = style;
-		$.get('beach-status.csv', $.proxy(me.beachFeatures, me)).fail(function(){
+		$.get('beach-status.csv?' + this.cacheBust, $.proxy(me.beachFeatures, me)).fail(function(){
 			me.alert("Unable to load beach status. Please try again.");
 		});
 		$('#status-table').filterable({filter: $.proxy(me.extent, me)});
@@ -23,6 +25,8 @@ nyc.App = (function(){
 	};
 	
 	appClass.prototype = {
+		/** @private */
+		cacheBust: null,
 		/** @private */
 		map: null,
 		/** 
@@ -85,7 +89,7 @@ nyc.App = (function(){
 		 * @private
 		 */
 		getBeachQuality: function(){
-			$.get('beach-water-quality.csv', $.proxy(this.beachQuality, this)).fail(function(){
+			$.get('beach-water-quality.csv?' + this.cacheBust, $.proxy(this.beachQuality, this)).fail(function(){
 				me.alert("Unable to load water quality testing results. Please try again.");
 			});
 		},
