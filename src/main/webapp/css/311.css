@@ -1,0 +1,54 @@
+html, body {
+	font-size: 14px;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	text-shadow: none !important;
+	color: darkblue;
+}
+#status-table {
+	width:100%;
+	border-collapse: collapse;
+	background-color: #f9f9f9;
+}
+#status-table tr:hover {
+	background-color: rgb(237, 237, 237);
+}
+#status-table td {
+	height: 30px;
+	padding: 5px;
+	border: 1px solid white;
+	vertical-align: middle;
+}
+#status-table th {
+	border: 1px solid #f9f9f9;
+	background-color: white;
+}
+#status-table td.PUBLIC img {
+	width: 22px;
+	height: 22px;
+	margin-bottom: -3px;
+}
+#status-table td div {
+	display: inline-block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+#status-table td.name.PUBLIC div, #status-table td.status div {
+	margin-right: 24px;
+}
+.open, .open div {
+	background-color: #32FF32;
+}
+.advisory, .advisory div {
+	background-color: #FFFF32;
+}
+.closed, .closed div {
+	background-color: #FF3232;
+	color: #FFFFAA;	
+}
+.wet-advisory, .wet-advisory div {
+	background-color: #FFFF32;
+}
+.off-season, .off-season div {
+	background-color: #00008B;
+	color: #FFFFAA !important;	
+}
