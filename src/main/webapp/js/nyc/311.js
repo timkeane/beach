@@ -11,9 +11,23 @@ $(document).ready(function(){
 		return name;
 	};
 	
+	function sort(csvData){
+		csvData.sort(function(csvRow1, csvRow2){
+			$.each([csvRow1, csvRow2], function(_, csvRow){
+				csvRow.order = csvRow[3] == 'PUBLIC' ? 0 : 1;
+				csvRow.order += csvRow[2];
+				csvRow.order += csvRow[0];
+				
+			});
+			if (csvRow1.order < csvRow2.order) return -1;
+			if (csvRow1.order > csvRow2.order) return 1;
+			return 0;
+		});		
+	};
 	function listStatus(csvData){
-		var tbody = $('#status-table tbody');
-		$.each($.csv.toArrays(csvData), function(_, csvRow){
+		var tbody = $('#status-table tbody'), rows = $.csv.toArrays(csvData);
+		sort(rows);
+		$.each(rows, function(_, csvRow){
 			var name = csvRow[0],
 				type = csvRow[3],
 				status = csvRow[1],
