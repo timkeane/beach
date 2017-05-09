@@ -14,7 +14,8 @@ nyc.App = (function(){
 			timeOffset = 1000 * 60 * 15;
 		me.cacheBust = Math.round(new Date().getTime() / timeOffset) * timeOffset;
 		me.source = new ol.source.Vector({});
-		map.addLayer(new ol.layer.Vector({source: me.source, style: $.proxy(style.style, style)}));
+		me.layer = new ol.layer.Vector({source: me.source, style: $.proxy(style.style, style), zIndex: 2000});
+		map.addLayer(me.layer);
 		me.map = map;
 		me.style = style;
 		$.get('beach-status.csv?' + this.cacheBust, $.proxy(me.beachFeatures, me)).fail(function(){
@@ -45,7 +46,7 @@ nyc.App = (function(){
 			return new ol.Feature({
 				geometry: new ol.geom.LineString(nyc.data.beaches[name].lineString),
 				labelPointer: new ol.geom.LineString(nyc.data.beaches[name].labelPointer), 
-				labelPoint: new ol.geom.Point(nyc.data.beaches[name].labelPointer[1]), 
+				labelPoint: new ol.geom.Point(nyc.data.beaches[name].labelPointer[1]),
 				point: new ol.geom.Point(nyc.data.beaches[name].labelPointer[0]), 
 				name: name,
 				status: this.normalize(csvRow[1]),
@@ -62,7 +63,7 @@ nyc.App = (function(){
 		 * @private 
 		 */
 		createTip: function(){
-			var tip = new nyc.ol.FeatureTip(this.map, [{source: this.source, labelFunction: this.style.tip}]);
+			var tip = new nyc.ol.FeatureTip(this.map, [{layer: this.layer, labelFunction: this.style.tip}]);
 			$('#status, #quality').hover(function(){tip.hide();});
 		},
 		/** 
@@ -145,7 +146,7 @@ nyc.App = (function(){
 		 * @public 
 		 */
 		full: function(){
-			this.zoom(nyc.NYC_EXTENT);
+			this.zoom(nyc.ol.Basemap.EXTENT);
 		},
 		/**
 		 * Displays water quality testing results for the specified beach
@@ -280,13 +281,8 @@ nyc.App = (function(){
 		 */
 		zoom: function(extent, zoom){
 			var map = this.map, view = map.getView();
-			map.beforeRender(
-				ol.animation.pan({source: view.getCenter()}),
-				ol.animation.zoom({resolution: view.getResolution()})
-			);
 			if (zoom){
-				view.setCenter([(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2]);
-				view.setZoom(zoom);
+				view.animate({center:[(extent[0] + extent[2]) / 2, (extent[1] + extent[3]) / 2], zoom: zoom});
 			}else{
 				view.fit(extent, map.getSize());
 			}

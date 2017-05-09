@@ -1,30 +1,6 @@
 $(document).ready(function(){
 	
-	new nyc.Lang('body', nyc.data.languages);
-	new nyc.Share('body');
-	
-	var base = new nyc.ol.layer.BaseLayer();
-	var ortho = new nyc.ol.layer.BaseLayer(nyc.ol.layer.BaseLayer.ORTHO_OPTIONS);
-	
-	var timeout = false;
-	base.on('postcompose', function(event){
-		nyc.ol.layer.grayscale(event);
-		if (!timeout)
-			setTimeout(function(){
-				$('#first-load').fadeOut();
-			}, 1000);
-		timeout = true;
-	});
-
-	var map = new ol.Map({
-		target: $('#map')[0],
-		layers: [base, ortho],
-		view: new ol.View({
-			projection: nyc.EPSG_2263,
-			center: nyc.NYC_CENTER,
-			resolutions: nyc.ol.layer.BaseLayer.RESOLUTIONS
-		})
-	});
+	var map = new nyc.ol.Basemap({target: $('#map')[0]});
 	/* show water quality data on feature click */
 	map.on('singleclick', function(evt){
 		map.forEachFeatureAtPixel(evt.pixel, function(feature){
@@ -34,16 +10,14 @@ $(document).ready(function(){
 	/* hide map on page load if small screen */
 	map.once('moveend', function(){
 		if ($(window).height() < 620){
-			$('#main').animate({scrollTop: $('#status').position().top - 38}, 1000);				
+			$('#main').animate({scrollTop: $('#status').position().top - 38}, 1000);	
 		}
+		$('#first-load').fadeOut();
 	});
 	/* change to imagery when zoomed in */
 	map.on('moveend', function(evt){
-		var isOrtho = $.inArray(map.getView().getResolution(), nyc.ol.layer.BaseLayer.RESOLUTIONS) > 4
-		ortho.setVisible(isOrtho);
-		base.setVisible(!isOrtho);
+		map[map.getView().getZoom() > 11 ? 'showPhoto' : 'hidePhoto']();
 	});
-	map.getView().fit(nyc.NYC_EXTENT, map.getSize());
 	
 	nyc.app = new nyc.App(map, new nyc.Style());
 	

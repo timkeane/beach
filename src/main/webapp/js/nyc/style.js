@@ -6,7 +6,9 @@ nyc.Style = (function(){
 	styleClass.prototype = {
 		cache: {},
 		pointerGeom: function(line, zoom){
-			if (zoom < 2) return line;
+			if (zoom < 11){
+				return line;
+			}
 
 			var start = line.getFirstCoordinate();
 			var x0 = start[0];
@@ -17,7 +19,7 @@ nyc.Style = (function(){
 			var y1 = end[1];
 			
 			var m = (y1 - y0) / (x1 - x0);
-			var distance = line.getLength() / {'2': 2, '3': 4, '4': 8, '5': 16}[zoom];
+			var distance = line.getLength() / {'11': 2, '12': 4, '13': 8, '14': 16}[zoom];
 		
 			var x = x0 + ((x0 > x1 ? -1 : 1) * Math.sqrt((distance * distance) / (1 + (m * m))));
 			var y = (m * (x - x0)) + y0;		
@@ -25,6 +27,8 @@ nyc.Style = (function(){
 			return new ol.geom.LineString([start, [x, y]]);
 		},
 		textSym: function(name, geom, fontSize, align){
+			
+			console.info('textSym',arguments);
 			return new ol.style.Style({
 		    	geometry: geom,
 				text: new ol.style.Text({
@@ -37,6 +41,7 @@ nyc.Style = (function(){
 			});
 		},
 		pointerSym: function(labelPointer, color){
+			//console.info('pointerSym',arguments);
 			return new ol.style.Style({
 		    	geometry: labelPointer,
 		    	stroke: new ol.style.Stroke({
@@ -46,6 +51,7 @@ nyc.Style = (function(){
 			});
 		},
 		lineSym: function(geom, color){
+			//console.info('lineSym',arguments);
 			return new ol.style.Style({
 		    	geometry: geom,
 		    	stroke: new ol.style.Stroke({
@@ -55,6 +61,7 @@ nyc.Style = (function(){
 			});
 		},
 		pointSym: function(coord, color){
+			//console.info('pointSym',arguments);
 			return new ol.style.Style({
 		    	geometry: new ol.geom.Point(coord),
 		    	image: new ol.style.Circle({
@@ -64,20 +71,8 @@ nyc.Style = (function(){
 		          })
 			});
 		},
-		zoom: function(resolution){
-			var resolutions = nyc.ol.layer.BaseLayer.RESOLUTIONS, zoom = resolutions.indexOf(resolution);
-			if (zoom == -1) {
-				for (var z = 0; z < resolutions.length; z++){
-					if (resolution > resolutions[z]){
-						zoom = z;
-						break;
-					}
-				}
-			}
-			return zoom;
-		},
 		style: function(feature, resolution){
-			var zoom = this.zoom(resolution),
+			var zoom = nyc.ol.TILE_GRID.getZForResolution(resolution),
 				name = feature.get('name'),
 				geom = feature.get('geometry'),
 				labelPointer = this.pointerGeom(feature.get('labelPointer'), zoom),
@@ -85,7 +80,7 @@ nyc.Style = (function(){
 				status = feature.get('status'),
 				conf = nyc.data.status[status] || {rgb: ''},
 				color = conf.rgb.toString(),
-				align = zoom > 5 ? feature.get('alignLine') : feature.get('alignPointer');
+				align = zoom > 14 ? feature.get('alignLine') : feature.get('alignPointer');
 			
 			this.cache[zoom] = this.cache[zoom] || {};
 			this.cache[zoom][name] = this.cache[zoom][name] || {};
@@ -95,12 +90,12 @@ nyc.Style = (function(){
 			
 			this.cache[zoom][name][status] = {};
 			
-			if (zoom > 5){ /* render beach as labeled line geometry */
+			if (zoom > 14){ /* render beach as labeled line geometry */
 				this.cache[zoom][name][status] = [
 			        this.lineSym(geom, color),
 					this.textSym(name, geom, 16, align)
 			    ];
-			}else if (zoom > 3){ /* render beach as line geometry with label pointer */
+			}else if (zoom > 12){ /* render beach as line geometry with label pointer */
 				this.cache[zoom][name][status] = [
 		            this.lineSym(geom, color),
 		 			this.pointerSym(labelPointer, 'white'),
@@ -112,7 +107,7 @@ nyc.Style = (function(){
 		 			this.pointerSym(labelPointer, 'white'),
 		 			this.pointerSym(labelPointer, 'darkblue'),
 		 	        this.pointSym(labelPointer.getFirstCoordinate(), color),
-					this.textSym(name, labelPoint, {'0': 11, '1': 12, '2': 14, '3': 16}[zoom], align)
+					this.textSym(name, labelPoint, {'9': 11, '10': 12, '11': 14, '12': 16}[zoom], align)
 			    ];
 			}
 			return this.cache[zoom][name][status];
