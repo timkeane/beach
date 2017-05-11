@@ -1,0 +1,64 @@
+plugins {
+    id 'base'
+    id 'org.hidetake.ssh' version '1.1.2'
+}
+
+ext{
+	appName = 'beach-water-quality'
+	ver = 'v0.0.2'	
+}
+
+task setEnv << {
+	if (!project.hasProperty('env')) project.ext.env = default_env
+ 	archive.archiveName = "beach-water-quality-${ver}-${env}.zip"
+	archive.from {"build/${ver}"}
+}
+
+task copyFiles(dependsOn: [clean, setEnv]) << {
+	def build = new File("build/${ver}")
+	build.mkdirs()
+	copy {
+		from 'src/main/webapp'
+		include '*.html'
+		include '*.json'
+		include '*.csv'
+		include 'img/**'
+		exclude 'img/Thumbs.db'
+		include 'css/**'
+		include 'js/**'
+		into "build/${ver}" 
+	}
+}
+
+task archive(type: Zip, dependsOn: [copyFiles]) {}
+
+remotes {
+	deployTarget {}
+}
+
+task deploy(dependsOn: [archive]) << {
+	def archiveDir = project.ext['archive.dir']
+	def deployDir = project.ext['beach.deploy.dir']
+	
+	remotes.deployTarget.host = project.ext["${env}.host"]
+    remotes.deployTarget.user = project.ext["${env}.user"]	
+    remotes.deployTarget.identity = file("${System.properties['user.home']}/.ssh/id_rsa")
+
+	println "deploying ${archive.archiveName} to ${remotes.deployTarget.host}:${deployDir}"
+	
+	ssh.run {
+        session(remotes.deployTarget) {
+        	execute "mkdir -p ${archiveDir}"
+        	execute "mkdir -p ${deployDir}"
+            put "build/distributions/${archive.archiveName}", archiveDir
+            execute "cp -R ${deployDir} ${deployDir}.bak"
+            execute "rm -rf ${deployDir}"
+            execute "unzip ${archiveDir}/${archive.archiveName} -d ${deployDir}"
+            execute "rm -rf ${deployDir}.bak"
+        }
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion '2.9'
+}
