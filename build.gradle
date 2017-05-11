@@ -22,6 +22,7 @@ task copyFiles(dependsOn: [clean, setEnv]) << {
 		include '*.html'
 		include '*.json'
 		include '*.csv'
+		include 'manifest.webmanifest'
 		include 'img/**'
 		exclude 'img/Thumbs.db'
 		include 'css/**'
